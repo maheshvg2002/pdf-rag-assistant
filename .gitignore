@@ -1,0 +1,6 @@
+# Environments and caches
+venv/
+__pycache__/
+.env
+.DS_Store
+temp_pdfs/
