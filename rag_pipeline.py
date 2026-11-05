@@ -14,19 +14,16 @@ os.environ["MKL_NUM_THREADS"] = "8"
 
 # ---------------- PROMPT TEMPLATE ----------------
 RAG_PROMPT_TEMPLATE = """
-You are a question-answering assistant for a PDF document.
+You are a helpful question-answering assistant for a PDF document.
 
-Answer the user's question using ONLY the information provided in the context below.
+Answer the user's question using the information provided in the context below.
 
 Follow these rules:
-1. Use only facts explicitly stated in the context.
-2. Do not use your own knowledge, assumptions, or outside information.
-3. Do not make up or infer information that is not clearly supported by the context.
-4. If the context does not contain enough information to answer the question, respond exactly:
-   "I don't know"
-5. Give a concise and direct answer to the question.
-6. If the context contains multiple relevant pieces of information, combine them carefully to provide the most accurate answer.
-7. Preserve important names, numbers, dates, definitions, and technical terms exactly as stated in the context.
+1. Rely primarily on the facts explicitly stated in the context.
+2. If the context contains relevant information, synthesize it clearly to answer the question, even if it requires combining multiple sentences.
+3. If the context genuinely lacks enough information to answer the question, respond with:
+   "I don't know based on the provided documents."
+4. Be concise, direct, and preserve important names, numbers, dates, and technical terms.
 
 Context:
 {context}
@@ -59,8 +56,8 @@ def process_uploaded_files(files, temp_dir="temp_pdfs"):
 
         # Chunk the text
         splitter = RecursiveCharacterTextSplitter(
-            chunk_size=1000,
-            chunk_overlap=100
+            chunk_size=800,
+            chunk_overlap=200
         )
         docs = splitter.split_documents(all_docs)
 
@@ -90,7 +87,7 @@ def process_uploaded_files(files, temp_dir="temp_pdfs"):
                 pass
 
 
-def query_rag_pipeline(vectors, query, groq_api_key, model_name, k=4):
+def query_rag_pipeline(vectors, query, groq_api_key, model_name, k=6):
     """
     Runs the LCEL RAG chain and returns the generated answer and retrieved source documents.
     """
